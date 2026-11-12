@@ -37,6 +37,10 @@ function fillStrip(plugin: AnchorActionsPlugin, parent: HTMLElement, cls: string
 			onClick: () => { hide(); plugin.runFromStrip(c.id); },
 			onContextMenu: e => {
 				const menu = new Menu();
+				menu.addItem(i => i.setTitle('Change icon…').setIcon('image').onClick(() => { hide(); plugin.openIconPicker(c.id); }));
+				if (plugin.hasCustomIcon(c.id)) {
+					menu.addItem(i => i.setTitle('Use default icon').setIcon('rotate-ccw').onClick(() => { hide(); void plugin.setStripIcon(c.id, undefined); }));
+				}
 				menu.addItem(i => i.setTitle('Remove from strip').setIcon('trash-2').onClick(() => { hide(); void plugin.removeFromStrip(c.id); }));
 				menu.showAtMouseEvent(e);
 			},

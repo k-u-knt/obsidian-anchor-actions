@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { DEFAULTS, mergeSettings, resolveStrip, addItem, moveItem, removeItem } from '../src/strip';
+import { DEFAULTS, mergeSettings, resolveStrip, addItem, moveItem, removeItem, setItemIcon, iconName } from '../src/strip';
 
 let n = 0;
 function t(name: string, fn: () => void) { fn(); n++; console.log('ok -', name); }
@@ -63,6 +63,22 @@ t('moveItem reorders and ignores out-of-range', () => {
 t('removeItem removes only the matching id', () => {
 	assert.deepEqual(ids(removeItem([{ id: 'a' }, { id: 'b' }, { id: 'c' }], 'b')), ['a', 'c']);
 	assert.deepEqual(ids(removeItem([{ id: 'a' }], 'z')), ['a']);
+});
+
+t('setItemIcon sets, replaces and clears the override for one item only', () => {
+	const xs = [{ id: 'a' }, { id: 'b', icon: 'star' }];
+	const set = setItemIcon(xs, 'a', 'bell');
+	assert.deepEqual(set, [{ id: 'a', icon: 'bell' }, { id: 'b', icon: 'star' }]);
+	assert.deepEqual(xs, [{ id: 'a' }, { id: 'b', icon: 'star' }]);
+	assert.deepEqual(setItemIcon(xs, 'b', undefined), [{ id: 'a' }, { id: 'b' }]);
+	assert.deepEqual(setItemIcon(xs, 'b', '  '), [{ id: 'a' }, { id: 'b' }]);
+	assert.deepEqual(setItemIcon(xs, 'zzz', 'bell'), xs);
+});
+
+t('iconName drops the lucide- prefix', () => {
+	assert.equal(iconName('lucide-alarm-clock'), 'alarm-clock');
+	assert.equal(iconName('star'), 'star');
+	assert.equal(iconName('my-pack-lucide-x'), 'my-pack-lucide-x');
 });
 
 console.log(`\n${n} tests passed`);

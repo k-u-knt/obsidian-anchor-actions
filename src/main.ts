@@ -1,8 +1,8 @@
 import { App, Menu, Plugin, PluginSettingTab, Setting } from 'obsidian';
-import { ActionsSettings, FALLBACK_ICON, addItem, mergeSettings, moveItem, removeItem, resolveStrip } from './strip';
+import { ActionsSettings, FALLBACK_ICON, addItem, mergeSettings, moveItem, removeItem, resolveStrip, setItemIcon } from './strip';
 import { allCommands, isRunnable, run } from './commands';
 import { selectionBarExtension, CanvasMenuPatcher, ReadingSelectionBar, getCanvas } from './ui';
-import { CommandPickerModal } from './picker';
+import { CommandPickerModal, IconPickerModal } from './picker';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -74,6 +74,30 @@ export default class AnchorActionsPlugin extends Plugin {
 		await this.saveSettings();
 	}
 
+	/** True when the user has set their own icon for this strip command. */
+	hasCustomIcon(id: string): boolean {
+		return !!this.settings.commands.find(c => c.id === id)?.icon;
+	}
+
+	/** The icon the command's plugin gave it, or the fallback. */
+	defaultIcon(id: string): string {
+		return allCommands(this.app)[id]?.icon || FALLBACK_ICON;
+	}
+
+	/** Pass undefined to go back to the command's own icon. */
+	async setStripIcon(id: string, icon: string | undefined) {
+		this.settings.commands = setItemIcon(this.settings.commands, id, icon);
+		await this.saveSettings();
+	}
+
+	openIconPicker(id: string, onPicked?: () => void) {
+		const name = allCommands(this.app)[id]?.name ?? id;
+		new IconPickerModal(this.app, name, async icon => {
+			await this.setStripIcon(id, icon);
+			onPicked?.();
+		}).open();
+	}
+
 	private addMenuItems(menu: Menu) {
 		for (const c of this.stripButtons()) {
 			menu.addItem(i => i.setTitle(c.name).setIcon(c.icon).setSection('action').onClick(() => run(this.app, c.id)));
@@ -120,18 +144,20 @@ class AnchorSettingTab extends PluginSettingTab {
 				.onClick(async () => { s.commands = moveItem(s.commands, i, i - 1); await save(); this.display(); }));
 			row.addExtraButton(b => b.setIcon('arrow-down').setTooltip('Move down').setDisabled(i === items.length - 1)
 				.onClick(async () => { s.commands = moveItem(s.commands, i, i + 1); await save(); this.display(); }));
-			row.addText(t => t.setPlaceholder(cmd?.icon || FALLBACK_ICON).setValue(item.icon ?? '')
-				.onChange(async v => {
-					const icon = v.trim();
-					if (icon) item.icon = icon; else delete item.icon;
-					await save();
-				}));
+			const current = item.icon || cmd?.icon || FALLBACK_ICON;
+			row.addExtraButton(b => b.setIcon(current)
+				.setTooltip(item.icon ? `Icon: ${item.icon} (yours). Click to change.` : `Icon: ${current} (default). Click to change.`)
+				.onClick(() => this.plugin.openIconPicker(item.id, () => this.display())));
+			if (item.icon) {
+				row.addExtraButton(b => b.setIcon('rotate-ccw').setTooltip('Use default icon')
+					.onClick(async () => { await this.plugin.setStripIcon(item.id, undefined); this.display(); }));
+			}
 			row.addExtraButton(b => b.setIcon('x').setTooltip('Remove from strip')
 				.onClick(async () => { s.commands = removeItem(s.commands, item.id); await save(); this.display(); }));
 		});
 
 		new Setting(containerEl)
-			.setDesc('The icon field takes a Lucide icon id (for example "star"); leave it empty to use the command\'s own icon.')
+			.setDesc('Click a command\'s icon to pick a different one.')
 			.addButton(b => b.setButtonText('Add command').setCta().onClick(() => this.plugin.openPicker(() => this.display())));
 	}
 }

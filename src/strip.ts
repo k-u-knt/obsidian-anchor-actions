@@ -66,3 +66,14 @@ export function moveItem(items: StripItem[], from: number, to: number): StripIte
 export function removeItem(items: StripItem[], id: string): StripItem[] {
 	return items.filter(i => i.id !== id);
 }
+
+/** Set (or, with an empty icon, clear) one item's icon override. */
+export function setItemIcon(items: StripItem[], id: string, icon: string | undefined): StripItem[] {
+	const v = icon?.trim();
+	return items.map(i => (i.id !== id ? i : v ? { id: i.id, icon: v } : { id: i.id }));
+}
+
+/** An icon id as people read it: Obsidian lists Lucide icons as "lucide-<name>". */
+export function iconName(id: string): string {
+	return id.startsWith('lucide-') ? id.slice('lucide-'.length) : id;
+}

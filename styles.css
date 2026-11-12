@@ -39,3 +39,8 @@
 .canvas-menu .anchor-actions-add { opacity: 0.6; }
 .anchor-actions-bar .anchor-actions-add:hover,
 .canvas-menu .anchor-actions-add:hover { opacity: 1; }
+
+/* Icon picker: icon drawn beside its name */
+.anchor-actions-icon-choice { display: flex; align-items: center; gap: var(--size-4-3); }
+.anchor-actions-icon-preview { display: flex; color: var(--icon-color); }
+.anchor-actions-icon-preview svg { width: var(--icon-m); height: var(--icon-m); }

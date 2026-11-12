@@ -1,5 +1,6 @@
-import { App, FuzzySuggestModal } from 'obsidian';
+import { App, FuzzyMatch, FuzzySuggestModal, getIconIds, setIcon } from 'obsidian';
 import { allCommands } from './commands';
+import { iconName } from './strip';
 
 interface Choice { id: string; name: string }
 
@@ -20,4 +21,28 @@ export class CommandPickerModal extends FuzzySuggestModal<Choice> {
 	getItemText(c: Choice): string { return c.name; }
 
 	onChooseItem(c: Choice): void { this.onPick(c.id); }
+}
+
+/** Search Obsidian's Lucide icons by name, with each icon drawn beside its name. */
+export class IconPickerModal extends FuzzySuggestModal<string> {
+	constructor(app: App, commandName: string, private onPick: (icon: string) => void) {
+		super(app);
+		this.setPlaceholder(`Pick an icon for "${commandName}"`);
+	}
+
+	getItems(): string[] {
+		const ids = getIconIds();
+		const lucide = ids.filter(id => id.startsWith('lucide-'));
+		return [...new Set((lucide.length ? lucide : ids).map(iconName))].sort();
+	}
+
+	getItemText(name: string): string { return name.replace(/-/g, ' '); }
+
+	renderSuggestion(m: FuzzyMatch<string>, el: HTMLElement): void {
+		el.addClass('anchor-actions-icon-choice');
+		setIcon(el.createSpan({ cls: 'anchor-actions-icon-preview' }), m.item);
+		el.createSpan({ text: m.item });
+	}
+
+	onChooseItem(name: string): void { this.onPick(name); }
 }
