@@ -1,0 +1,41 @@
+/* Selection strip: left margin, beside the first selected line */
+.anchor-actions-bar {
+	position: fixed;
+	z-index: var(--layer-popover);
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	padding: 3px;
+	border-radius: var(--radius-m);
+	background: var(--background-secondary);
+	border: 1px solid var(--background-modifier-border);
+	box-shadow: var(--shadow-s);
+	animation: anchor-actions-in 90ms ease-out;
+}
+.anchor-actions-bar .anchor-actions-btn {
+	width: 26px;
+	height: 26px;
+	padding: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.anchor-actions-bar .anchor-actions-btn svg { width: 16px; height: 16px; }
+@keyframes anchor-actions-in {
+	from { opacity: 0; transform: translateX(4px); }
+	to { opacity: 1; transform: none; }
+}
+
+/* Canvas: appended to the native selection menu */
+.canvas-menu .anchor-actions-canvas-sep {
+	width: 1px;
+	align-self: stretch;
+	margin: 4px 2px;
+	background: var(--background-modifier-border);
+}
+
+/* "+" is quieter than the commands beside it */
+.anchor-actions-bar .anchor-actions-add,
+.canvas-menu .anchor-actions-add { opacity: 0.6; }
+.anchor-actions-bar .anchor-actions-add:hover,
+.canvas-menu .anchor-actions-add:hover { opacity: 1; }

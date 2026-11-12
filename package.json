@@ -1,0 +1,20 @@
+{
+  "name": "obsidian-anchor-actions",
+  "version": "0.5.0",
+  "description": "Obsidian plugin: select text, an image or canvas cards and run any command from a small strip next to the selection.",
+  "scripts": {
+    "build": "esbuild src/main.ts --bundle --format=cjs --platform=browser --target=es2020 --external:obsidian --external:electron --external:@codemirror/view --external:@codemirror/state --outfile=dist/main.js && cp manifest.json styles.css dist/",
+    "typecheck": "tsc -p .",
+    "test": "esbuild test/strip.test.ts --bundle --platform=node --outfile=test/.out.js --log-level=warning && node test/.out.js"
+  },
+  "author": "Kenta Ninomiya",
+  "license": "MIT",
+  "devDependencies": {
+    "@codemirror/state": "^6.7.6",
+    "@codemirror/view": "^6.43.13",
+    "@types/node": "^26.6.3",
+    "esbuild": "^0.28.2",
+    "obsidian": "^1.13.1",
+    "typescript": "^7.0.2"
+  }
+}
