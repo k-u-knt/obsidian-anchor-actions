@@ -1,7 +1,7 @@
 {
   "id": "anchor-actions",
   "name": "Anchor Actions",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "minAppVersion": "1.5.0",
   "description": "Select text, an image or canvas cards and run any command from a small strip next to the selection. Add commands with +.",
   "author": "Kenta Ninomiya",

@@ -4,7 +4,6 @@ import { allCommands, isRunnable, run } from './commands';
 import { selectionBarExtension, CanvasMenuPatcher, ReadingSelectionBar, getCanvas } from './ui';
 import { CommandPickerModal, IconPickerModal } from './picker';
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
 export default class AnchorActionsPlugin extends Plugin {
 	settings!: ActionsSettings;

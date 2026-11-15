@@ -1,6 +1,5 @@
 import { App, Command, MarkdownView } from 'obsidian';
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
 /** Obsidian's command registry (internal, so every access is guarded). */
 function registry(app: App): Record<string, Command> {

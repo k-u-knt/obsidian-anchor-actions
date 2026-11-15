@@ -2,7 +2,6 @@ import { setIcon, MarkdownView, Menu } from 'obsidian';
 import { ViewPlugin, EditorView, ViewUpdate } from '@codemirror/view';
 import type AnchorActionsPlugin from './main';
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
 /** The canvas object behind a canvas view (internal API, so guarded). */
 export function getCanvas(leafOrView: any): any | null {
